@@ -10,6 +10,7 @@ import study.datajpa.entity.Team;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -160,4 +161,22 @@ class MemberRepositoryTest {
         }
     }
 
+    @Test
+    public void returnType() {
+        Member m1 = new Member("AAA", 10);
+        Member m2 = new Member("BBB", 20);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+
+        List<Member> result = memberRepository.findListByUsername("asdfasdf");
+        System.out.println("result = " + result);
+        System.out.println("result.size() = " + result.size());
+
+        Member findMember = memberRepository.findMemberByUsername("asdfasdf");
+        System.out.println("findMember = " + findMember);
+
+        // JAVA8이 나온 후, null을 반환할지, 예외 터트릴지에 대한 논쟁이 끝남 -> Optional<T>
+        Optional<Member> optional = memberRepository.findOptionalByUsername("asdfasdf");
+        System.out.println("optional = " + optional);
+    }
 }
