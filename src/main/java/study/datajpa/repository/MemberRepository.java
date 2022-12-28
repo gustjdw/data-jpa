@@ -31,10 +31,12 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     List<MemberDto> findMemberDto();
 
     @Query("select m from Member m where m.username in :names")
-    List<Member> findByNames(@Param("names")Collection<String> names);
+    List<Member> findByNames(@Param("names") Collection<String> names);
 
     List<Member> findListByUsername(String username);
+
     Member findMemberByUsername(String username);
+
     Optional<Member> findOptionalByUsername(String username);
 
     Page<Member> findByAge(int age, Pageable pageable);
@@ -47,7 +49,8 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     List<Member> findMemberFetchJoin();
 
     @Override
-    @EntityGraph(attributePaths = {"team"})  // 내부적으로 fetch join을 사용하는 것
+    @EntityGraph(attributePaths = {"team"})
+        // 내부적으로 fetch join을 사용하는 것
     List<Member> findAll();
 
     @EntityGraph(attributePaths = {"team"})
@@ -65,4 +68,13 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     List<Member> findLockByUsername(String username);
 
     <T> List<T> findProjectionsByUsername(@Param("username") String username, Class<T> type);
+
+    @Query(value = "select * from member where username = ?", nativeQuery = true)
+    Member findByNativeQuery(String username);
+
+    @Query(value = "SELECT m.member_id as id, m.username, t.name as teamName" +
+            " FROM member m left join team t ON m.team_id = t.team_id",
+            countQuery = "SELECT count(*) from member",
+            nativeQuery = true)
+    Page<MemberProjection> findByNativeProjection(Pageable pageable);
 }
